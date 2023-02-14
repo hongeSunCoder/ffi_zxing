@@ -1,0 +1,40 @@
+name: ffi_zxing
+description: A new Flutter FFI plugin project.
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ">=2.18.0 <3.0.0"
+  flutter: ">=3.3.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ffi: ^2.0.1
+  plugin_platform_interface: ^2.0.2
+
+dev_dependencies:
+  ffigen: ^7.2.4
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  plugin:
+    platforms:
+      android:
+        ffiPlugin: true
+      ios:
+        ffiPlugin: true
+ffigen:
+    name: GeneratedBindings
+    description: Binding to zxing 
+    output: "lib/ffi_zxing_bindings_generated.dart"
+    headers:
+      entry-points:
+        - 'ios/Classes/src/native_zxing.h'
+        
