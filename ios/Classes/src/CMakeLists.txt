@@ -16,8 +16,8 @@ set (BUILD_WRITERS ON)
 
 add_subdirectory(../../../cpp/zxing ZXing)
 
-# find_library(log-lib log)
-target_link_libraries(ffi_zxing ZXing)
+find_library(log-lib log)
+target_link_libraries(ffi_zxing ZXing ${log-lib})
 
 # set_target_properties(ffi_zxing PROPERTIES
 #   PUBLIC_HEADER ffi_zxing.h

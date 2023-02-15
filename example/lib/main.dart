@@ -1,7 +1,8 @@
+import 'package:ffi_zxing/camera/CameraPreview.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:ffi_zxing/ffi_zxing.dart' as ffi_zxing;
+import 'package:ffi_zxing/ffi_zxing.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,8 +22,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    sumResult = ffi_zxing.sum(1, 2);
-    sumAsyncResult = ffi_zxing.sumAsync(3, 4);
   }
 
   @override
@@ -34,40 +33,29 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Native Packages'),
         ),
-        body: SingleChildScrollView(
-          child: Container(
+        body: Container(
             padding: const EdgeInsets.all(10),
             child: Column(
               children: [
+
+                Container(
+                  width: 500,
+                  height: 500,
+                  color: Colors.red,
+                  child: const ZxingCameraPreview(),)
+                ,
+              
                 const Text(
                   'This calls a native function through FFI that is shipped as source in the package. '
                   'The native code is built as part of the Flutter Runner build.',
                   style: textStyle,
                   textAlign: TextAlign.center,
                 ),
-                spacerSmall,
-                Text(
-                  'sum(1, 2) = $sumResult',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
-                ),
-                spacerSmall,
-                FutureBuilder<int>(
-                  future: sumAsyncResult,
-                  builder: (BuildContext context, AsyncSnapshot<int> value) {
-                    final displayValue =
-                        (value.hasData) ? value.data : 'loading';
-                    return Text(
-                      'await sumAsync(3, 4) = $displayValue',
-                      style: textStyle,
-                      textAlign: TextAlign.center,
-                    );
-                  },
-                ),
+                
+              
               ],
             ),
           ),
-        ),
       ),
     );
   }

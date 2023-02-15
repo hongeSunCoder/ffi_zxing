@@ -11,7 +11,7 @@ import 'ffi_zxing_bindings_generated.dart';
 /// For very short-lived functions, it is fine to call them on the main isolate.
 /// They will block the Dart execution while running the native function, so
 /// only do this for native functions which are guaranteed to be short-lived.
-int sum(int a, int b) => _bindings.sum(a, b);
+int sum(int a, int b) => 100;
 
 /// A longer lived native function, which occupies the thread calling it.
 ///
@@ -50,7 +50,7 @@ final DynamicLibrary _dylib = () {
 }();
 
 /// The bindings to the native functions in [_dylib].
-final GeneratedBindings _bindings = GeneratedBindings(_dylib);
+final FFIZxingGeneratedBindings _bindings = FFIZxingGeneratedBindings(_dylib);
 
 
 /// A request to compute `sum`.
@@ -113,7 +113,9 @@ Future<SendPort> _helperIsolateSendPort = () async {
       ..listen((dynamic data) {
         // On the helper isolate listen to requests and respond to them.
         if (data is _SumRequest) {
-          final int result = _bindings.sum_long_running(data.a, data.b);
+      
+          // final int result = _bindings.sum_long_running(data.a, data.b);
+          final int result = 100;
           final _SumResponse response = _SumResponse(data.id, result);
           sendPort.send(response);
           return;
