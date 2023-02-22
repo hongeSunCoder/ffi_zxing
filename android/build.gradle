@@ -27,7 +27,7 @@ apply plugin: 'com.android.library'
 android {
     // Bumping the plugin compileSdkVersion requires all clients of this plugin
     // to bump the version in their app.
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     // Bumping the plugin ndkVersion requires all clients of this plugin to bump
     // the version in their app and to download a newer version of the NDK.
@@ -54,6 +54,13 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 21
+
+        externalNativeBuild {
+            cmake {
+                cppFlags '-frtti -fexceptions -std=c++2a'
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
     }
 }
