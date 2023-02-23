@@ -26,22 +26,7 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
   void dispose() {
     super.dispose();
     controller?.dispose();
-  }
-
-  bool _isProcessing = false;
-  processCameraImage(CameraImage image) async {
-    if (_isProcessing) {
-      return;
-    }
-    _isProcessing = true;
-    CodeResult result = await zxingProcessCameraImage(image, 0.5);
-    if (result.isValid == 1) {
-      print("scan result: ${result.text}");
-      setState(() {});
-      await Future.delayed(Duration(seconds: 1));
-    }
-
-    _isProcessing = false;
+    zxingProcessDispose();
   }
 
   initAsyncState() async {
@@ -63,7 +48,7 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
       try {
         await controller?.initialize();
 
-        controller?.startImageStream(processCameraImage);
+        switchCameraImageStream();
       } on CameraException catch (e) {
         print("MyCamera error: $e");
       }
@@ -80,6 +65,17 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
     });
   }
 
+  bool _isStartingImageStream = false;
+  void switchCameraImageStream() {
+    if (_isStartingImageStream) {
+      controller?.stopImageStream();
+      _isStartingImageStream = false;
+    } else {
+      controller?.startImageStream(processCameraImage);
+      _isStartingImageStream = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (controller == null || !controller!.value.isInitialized) {
@@ -87,10 +83,29 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
     }
     return CameraPreview(
       controller!,
-      child: const Text(
-        "this is camera",
-        style: TextStyle(color: Colors.white),
-      ),
+      child: Center(
+          child: ElevatedButton(
+              onPressed: switchCameraImageStream,
+              child: Text(
+                "Stop",
+                style: TextStyle(color: Colors.white),
+              ))),
     );
+  }
+
+  bool _isProcessing = false;
+  processCameraImage(CameraImage image) async {
+    // if (_isProcessing) {
+    //   return;
+    // }
+    // _isProcessing = true;
+    CodeResult result = await zxingProcessCameraImage(image, 0.5);
+    if (result.isValid == 1) {
+      print("scan result: ${result.text}");
+      setState(() {});
+      await Future.delayed(Duration(seconds: 1));
+    }
+
+    // _isProcessing = false;
   }
 }

@@ -56,7 +56,12 @@ Future<SendPort> scanHelperIsolateSendPort = () async {
         // The helper isolate sent us a response to a request we sent.
         final Completer<CodeResult> completer = scanRequests[data.id]!;
         scanRequests.remove(data.id);
+
+        // print("scanRequests: ${scanRequests.length}");
         completer.complete(data.codeResult);
+        return;
+      }
+      if (data is int) {
         return;
       }
       throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
@@ -70,14 +75,16 @@ Future<SendPort> scanHelperIsolateSendPort = () async {
         if (data is ScanRequest) {
           // final int result = generatedBindings.sum_long_running(data.a, data.b);
 
-          final CodeResult result = generatedBindings.zxingRead(
-              data.imageBytes.allocatePointer(),
-              data.width,
-              data.height,
-              data.cropSize);
-          final ScanResponse response =
-              ScanResponse(id: data.id, codeResult: result);
-          sendPort.send(response);
+          // final CodeResult result = generatedBindings.zxingRead(
+          //     data.imageBytes.allocatePointer(),
+          //     data.width,
+          //     data.height,
+          //     data.cropSize);
+
+          // final ScanResponse response =
+          //     ScanResponse(id: data.id, codeResult: r.ref);
+          print("waht the funk");
+          sendPort.send(1);
           return;
         }
         throw UnsupportedError('Unsupported message type: ${data.runtimeType}');

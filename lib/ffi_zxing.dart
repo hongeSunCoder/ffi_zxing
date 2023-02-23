@@ -7,13 +7,12 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:ffi_zxing/camera/flow_data_model.dart';
 import 'package:ffi_zxing/camera/image_converter.dart';
-import 'package:flutter/material.dart';
 
 import 'ffi_zxing_bindings_generated.dart';
 
+SendPort? _helperIsolateSendPort;
 Future<CodeResult> zxingProcessCameraImage(
     CameraImage image, double cropPercent) async {
-  final SendPort helperIsolateSendPort = await scanHelperIsolateSendPort;
   final int requestId = nextScanRequestId++;
   final ScanRequest request = ScanRequest(
       id: requestId,
@@ -25,8 +24,16 @@ Future<CodeResult> zxingProcessCameraImage(
   final Completer<CodeResult> completer = Completer<CodeResult>();
   scanRequests[requestId] = completer;
 
-  helperIsolateSendPort.send(request);
+  _helperIsolateSendPort ??= await scanHelperIsolateSendPort;
+  _helperIsolateSendPort?.send(request);
+
   return completer.future;
+}
+
+void zxingProcessDispose() {
+  if (_helperIsolateSendPort != null) {
+    _helperIsolateSendPort = null;
+  }
 }
 
 const String _libName = 'ffi_zxing';
