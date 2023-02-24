@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:ffi_zxing/ffi_zxing.dart';
 import 'package:ffi_zxing/ffi_zxing_bindings_generated.dart';
 import 'package:flutter/material.dart';
+import 'data_model.dart';
 
 class ZxingCameraPreview extends StatefulWidget {
   const ZxingCameraPreview({super.key});
@@ -95,19 +95,19 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
 
   bool _isProcessing = false;
   processCameraImage(CameraImage image) async {
-    // if (_isProcessing) {
-    //   return;
-    // }
-    // _isProcessing = true;
-    zxingProcessCameraImage(image, 0.5);
-    // CodeResult result = await zxingProcessCameraImage(image, 0.5);
-    // zxingProcessCameraImage(image, 0.5);
-    // if (result.isValid == 1) {
-    //   print("scan result: ${result.text}");
-    //   setState(() {});
-    //   await Future.delayed(Duration(seconds: 1));
-    // }
+    if (_isProcessing) {
+      return;
+    }
+    _isProcessing = true;
+    CodeResult result = await zxingProcessCameraImage(image, 1);
+    if (result.isValid == 1) {
+      print("scan result: ${result.textString}");
 
-    // _isProcessing = false;
+      await Future.delayed(Duration(seconds: 1));
+    }
+
+    await Future.delayed(Duration(seconds: 1));
+
+    _isProcessing = false;
   }
 }
