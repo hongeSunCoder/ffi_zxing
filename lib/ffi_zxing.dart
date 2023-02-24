@@ -10,9 +10,10 @@ import 'package:ffi_zxing/camera/image_converter.dart';
 
 import 'ffi_zxing_bindings_generated.dart';
 
+// 818 count completer map is memory over?
+
 SendPort? _helperIsolateSendPort;
-Future<CodeResult> zxingProcessCameraImage(
-    CameraImage image, double cropPercent) async {
+zxingProcessCameraImage(CameraImage image, double cropPercent) async {
   final int requestId = nextScanRequestId++;
   final ScanRequest request = ScanRequest(
       id: requestId,
@@ -21,13 +22,21 @@ Future<CodeResult> zxingProcessCameraImage(
       height: image.height,
       cropSize: (min(image.width, image.height) * cropPercent).round());
 
-  final Completer<CodeResult> completer = Completer<CodeResult>();
-  scanRequests[requestId] = completer;
+  // final Completer<CodeResult> completer = Completer<CodeResult>();
+
+  // tempScanRequests[requestId] = 1;
+  // scanRequests[requestId] = completer;
+
+  print("scanRequests length: ${scanRequests.length}");
+
+  // print("tempScanRequests length: ${tempScanRequests.length}");
 
   _helperIsolateSendPort ??= await scanHelperIsolateSendPort;
+
+  // _helperIsolateSendPort?.send(requestId);
   _helperIsolateSendPort?.send(request);
 
-  return completer.future;
+  // return completer.future;
 }
 
 void zxingProcessDispose() {

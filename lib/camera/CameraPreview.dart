@@ -99,12 +99,14 @@ class _ZxingCameraPreviewState extends State<ZxingCameraPreview> {
     //   return;
     // }
     // _isProcessing = true;
-    CodeResult result = await zxingProcessCameraImage(image, 0.5);
-    if (result.isValid == 1) {
-      print("scan result: ${result.text}");
-      setState(() {});
-      await Future.delayed(Duration(seconds: 1));
-    }
+    zxingProcessCameraImage(image, 0.5);
+    // CodeResult result = await zxingProcessCameraImage(image, 0.5);
+    // zxingProcessCameraImage(image, 0.5);
+    // if (result.isValid == 1) {
+    //   print("scan result: ${result.text}");
+    //   setState(() {});
+    //   await Future.delayed(Duration(seconds: 1));
+    // }
 
     // _isProcessing = false;
   }

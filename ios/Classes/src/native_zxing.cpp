@@ -45,7 +45,7 @@ extern "C"
 
             code.format = Format(static_cast<int>(result.format()));
         }
-
+        delete[] data;
         int evalInMillis = static_cast<int>(get_now() - start);
         platform_log("Decode done in %dms\n", evalInMillis);
         return code;

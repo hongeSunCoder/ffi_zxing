@@ -35,6 +35,8 @@ int nextScanRequestId = 0;
 final Map<int, Completer<CodeResult>> scanRequests =
     <int, Completer<CodeResult>>{};
 
+final Map<int, dynamic> tempScanRequests = <int, dynamic>{};
+
 /// The SendPort belonging to the helper isolate.
 Future<SendPort> scanHelperIsolateSendPort = () async {
   // The helper isolate is going to send us back a SendPort, which we want to
@@ -62,6 +64,10 @@ Future<SendPort> scanHelperIsolateSendPort = () async {
         return;
       }
       if (data is int) {
+        scanRequests.remove(data);
+        print(
+            "return request $data message from helper isolate, scanRequest length: ${scanRequests.length}");
+
         return;
       }
       throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
@@ -75,16 +81,25 @@ Future<SendPort> scanHelperIsolateSendPort = () async {
         if (data is ScanRequest) {
           // final int result = generatedBindings.sum_long_running(data.a, data.b);
 
-          // final CodeResult result = generatedBindings.zxingRead(
-          //     data.imageBytes.allocatePointer(),
-          //     data.width,
-          //     data.height,
-          //     data.cropSize);
+          Pointer<Char> imageBytesPointer = data.imageBytes.allocatePointer();
+          // max 1583
+          final CodeResult result = generatedBindings.zxingRead(
+              imageBytesPointer, data.width, data.height, data.cropSize);
 
           // final ScanResponse response =
-          //     ScanResponse(id: data.id, codeResult: r.ref);
-          print("waht the funk");
-          sendPort.send(1);
+          //     ScanResponse(id: data.id, codeResult: result);
+          // print("request ${data.id} from main isolate, sending back...");
+
+          sendPort.send(data.id);
+
+          calloc.free(imageBytesPointer);
+
+          // sendPort.send(response);
+          return;
+        }
+        if (data is int) {
+          print("get request $data from main isolate, sending back...");
+          sendPort.send(data);
           return;
         }
         throw UnsupportedError('Unsupported message type: ${data.runtimeType}');
@@ -105,6 +120,7 @@ extension Uint8ListBlobConversion on Uint8List {
     final Pointer<Int8> blob = calloc<Int8>(length);
     final Int8List blobBytes = blob.asTypedList(length);
     blobBytes.setAll(0, this);
+
     return blob.cast<Char>();
   }
 }
