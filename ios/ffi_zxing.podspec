@@ -30,6 +30,6 @@ A new Flutter FFI plugin project.
     'CLANG_CXX_LANGUAGE_STANDARD' => 'c++20'
   }
 
-  s.framework = 'AVFoundation'
+  # s.framework = 'AVFoundation'
   s.library = 'c++'
 end
